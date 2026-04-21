@@ -2,149 +2,233 @@
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>برنامه چی | نسخه تضمینی</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>برنامه چی | نسخه نهایی</title>
     <style>
-        body { 
-            background-color: #121212; 
-            color: #ffffff; 
-            font-family: Arial, sans-serif; 
-            display: flex; 
-            flex-direction: column;
-            align-items: center; 
+        /* تنظیمات رنگ و ظاهر کلی */
+        :root {
+            --bg: #0f111a;
+            --card: #1a1c29;
+            --primary: #ff007a; /* صورتی نئونی */
+            --secondary: #00d2ff; /* آبی روشن */
+            --text: #ffffff;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+            display: flex;
+            justify-content: center;
             padding-top: 50px;
+            margin: 0;
         }
-        .main-card {
-            background: #1c1c1c;
+
+        .container {
+            width: 90%;
+            max-width: 400px;
+            background: var(--card);
             padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.5);
-            width: 320px;
-            border: 2px solid #0f3460;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.05);
         }
-        h2 { color: #e94560; text-align: center; margin-bottom: 20px; }
-        .input-area { display: flex; gap: 5px; margin-bottom: 20px; }
-        input { 
-            flex: 1; 
-            padding: 10px; 
-            border-radius: 5px; 
-            border: none; 
-            outline: none;
+
+        h1 {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 25px;
+            background: linear-gradient(to left, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
-        .add-btn { 
-            background: #e94560; 
-            color: white; 
-            border: none; 
-            padding: 10px 15px; 
-            border-radius: 5px; 
-            cursor: pointer; 
-            font-weight: bold;
+
+        /* بخش ورودی */
+        .input-box {
+            display: flex;
+            background: #090b13;
+            padding: 5px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #2a2e3f;
         }
-        .list-item {
-            background: #0f3460;
+
+        input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: white;
             padding: 10px;
-            border-radius: 8px;
-            margin-bottom: 8px;
+            outline: none;
+            font-size: 1rem;
+        }
+
+        button#add-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        button#add-btn:hover {
+            box-shadow: 0 0 15px var(--primary);
+            transform: translateY(-2px);
+        }
+
+        /* لیست کارها */
+        #task-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .task-item {
+            background: #252839;
+            padding: 12px 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            animation: fadeIn 0.3s ease;
         }
-        .task-text { cursor: pointer; flex: 1; }
-        .done { text-decoration: line-through; color: #53354a; }
-        .del-btn { 
-            background: #53354a; 
-            color: #e94560; 
-            border: 1px solid #e94560; 
-            padding: 3px 8px; 
-            border-radius: 4px; 
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .task-content {
+            display: flex;
+            align-items: center;
+            gap: 10px;
             cursor: pointer;
-            font-size: 11px;
+            flex: 1;
+        }
+
+        .task-item.completed {
+            opacity: 0.5;
+            background: #1a1c29;
+        }
+
+        .task-item.completed span {
+            text-decoration: line-through;
+            color: #888;
+        }
+
+        .delete-btn {
+            background: rgba(255, 0, 0, 0.2);
+            color: #ff4d4d;
+            border: 1px solid #ff4d4d;
+            padding: 5px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: 0.3s;
+        }
+
+        .delete-btn:hover {
+            background: #ff4d4d;
+            color: white;
+        }
+
+        .empty-msg {
+            text-align: center;
+            color: #555;
+            font-size: 0.9rem;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
 
-    <div class="main-card">
-        <h2>برنامه چی؟</h2>
-        
-        <div class="input-area">
-            <input type="text" id="myInput" placeholder="کارت رو بنویس...">
-            <button class="add-btn" id="submitButton">افزودن</button>
-        </div>
-
-        <div id="taskContainer"></div>
+<div class="container">
+    <h1>برنامه چی؟</h1>
+    
+    <div class="input-box">
+        <input type="text" id="todo-input" placeholder="برنامه بعدی چیه؟">
+        <button id="add-btn" onclick="addNewTask()">اضافه</button>
     </div>
 
-    <script>
-        // ۱. متغیرها
-        var inputField = document.getElementById("myInput");
-        var addButton = document.getElementById("submitButton");
-        var container = document.getElementById("taskContainer");
+    <div id="task-list"></div>
+    <div id="empty-info" class="empty-msg">لیست تو خالیه!</div>
+</div>
+
+<script>
+    // انتخاب عناصر اصلی
+    const input = document.getElementById('todo-input');
+    const listContainer = document.getElementById('task-list');
+    const emptyInfo = document.getElementById('empty-info');
+
+    // لود کردن داده‌ها از حافظه مرورگر
+    let tasks = JSON.parse(localStorage.getItem('barnamechi_v3')) || [];
+
+    // تابع اصلی برای نمایش لیست
+    function renderTasks() {
+        listContainer.innerHTML = "";
         
-        // ۲. آرایه اطلاعات (تلاش برای خواندن از حافظه)
-        var allTasks = [];
-        var saved = localStorage.getItem("barnamechi_data");
-        if (saved) {
-            allTasks = JSON.parse(saved);
-        }
-
-        // ۳. تابع نمایش لیست
-        function refreshList() {
-            container.innerHTML = ""; // خالی کردن لیست برای بازنویسی
+        if (tasks.length === 0) {
+            emptyInfo.style.display = "block";
+        } else {
+            emptyInfo.style.display = "none";
             
-            for (var i = 0; i < allTasks.length; i++) {
-                var task = allTasks[i];
+            tasks.forEach((task, index) => {
+                const item = document.createElement('div');
+                item.className = task-item ${task.done ? 'completed' : ''};
                 
-                // ساختن بدنه هر آیتم
-                var div = document.createElement("div");
-                div.className = "list-item";
-                if (task.isDone) { div.className += " done"; }
-
-                var span = document.createElement("span");
-                span.className = "task-text";
-                span.innerHTML = task.title;
-                // قابلیت تیک زدن (با استفاده از یک ترفند ساده برای انتقال ID)
-                span.setAttribute("onclick", "toggleStatus(" + i + ")");
-
-                var btn = document.createElement("button");
-                btn.className = "del-btn";
-                btn.innerHTML = "حذف";
-                btn.setAttribute("onclick", "removeTask(" + i + ")");
-
-                div.appendChild(span);
-                div.appendChild(btn);
-                container.appendChild(div);
-            }
-            
-            // ذخیره در حافظه
-            localStorage.setItem("barnamechi_data", JSON.stringify(allTasks));
+                item.innerHTML = `
+                    <div class="task-content" onclick="toggleTask(${index})">
+                        <input type="checkbox" ${task.done ? 'checked' : ''} style="cursor:pointer">
+                        <span>${task.text}</span>
+                    </div>
+                    <button class="delete-btn" onclick="deleteTask(${index})">حذف</button>
+                `;
+                listContainer.appendChild(item);
+            });
         }
+        
+        // ذخیره تغییرات در حافظه
+        localStorage.setItem('barnamechi_v3', JSON.stringify(tasks));
+    }
 
-        // ۴. تابع افزودن
-        addButton.onclick = function() {
-            var val = inputField.value;
-            if (val.trim() === "") {
-                alert("لطفاً چیزی بنویسید!");
-                return;
-            }
-            allTasks.push({ title: val, isDone: false });
-            inputField.value = "";
-            refreshList();
-        };
-
-        // ۵. تابع حذف
-        function removeTask(index) {
-            allTasks.splice(index, 1);
-            refreshList();
+    // افزودن کار جدید
+    function addNewTask() {
+        const text = input.value.trim();
+        if (text === "") {
+            alert("اول یه چیزی بنویس!");
+            return;
         }
+        
+        tasks.unshift({ text: text, done: false });
+        input.value = "";
+        renderTasks();
+    }
 
-        // ۶. تابع تیک زدن
-        function toggleStatus(index) {
-            allTasks[index].isDone = !allTasks[index].isDone;
-            refreshList();
+    // تغییر وضعیت انجام شده
+    window.toggleTask = function(index) {
+        tasks[index].done = !tasks[index].done;
+        renderTasks();
+    };
+
+    // حذف کردن
+    window.deleteTask = function(index) {
+        tasks.splice(index, 1);
+        renderTasks();
+    };
+
+    // اینتر زدن برای اضافه کردن سریع
+    input.addEventListener("keypress", function(event) {
+        if (event.key === "Enter") {
+            addNewTask();
         }
+    });
 
-        // ۷. اجرای اولیه برای نمایش داده‌های قبلی
-        refreshList();
-    </script>
+    // اجرای اولیه
+    renderTasks();
+</script>
+
 </body>
 </html>
