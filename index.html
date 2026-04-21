@@ -1,181 +1,205 @@
 <!DOCTYPE html>
-<html lang="fa">
+<html lang="fa" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>برنامه‌چی حرفه‌ای</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>برنامه چی | مدیریت هوشمند زمان</title>
+    <style>
+        :root {
+            --primary: #FFD700; /* زرد پرانرژی */
+            --dark: #1a1a2e;    /* سرمه‌ای تیره */
+            --light: #f4f4f9;
+            --accent: #ff6b6b;
+        }
 
-<style>
-:root{
-  --bg:#f5f7fb;
-  --card:#fff;
-  --text:#222;
-  --main:#6366f1;
-}
-.dark{
-  --bg:#0f172a;
-  --card:#1e293b;
-  --text:#e5e7eb;
-  --main:#22c55e;
-}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Tahoma', sans-serif;
+        }
 
-body{
-  margin:0;
-  font-family:sans-serif;
-  background:var(--bg);
-  color:var(--text);
-}
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+        }
 
-header{
-  display:flex;
-  justify-content:space-between;
-  padding:15px;
-  background:var(--card);
-}
+        /* Header */
+        header {
+            background: var(--dark);
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
 
-button{
-  border:none;
-  padding:6px 10px;
-  border-radius:8px;
-  background:var(--main);
-  color:#fff;
-  cursor:pointer;
-}
+        .logo {
+            color: var(--primary);
+            font-size: 1.8rem;
+            font-weight: bold;
+            text-decoration: none;
+        }
 
-.container{max-width:600px;margin:20px auto;}
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-right: 20px;
+            font-size: 0.9rem;
+            transition: 0.3s;
+        }
 
-input,select{
-  padding:10px;
-  margin:5px;
-  width:100%;
-}
+        nav a:hover {
+            color: var(--primary);
+        }
 
-.task{
-  background:var(--card);
-  padding:10px;
-  margin:10px 0;
-  border-radius:10px;
-  display:flex;
-  justify-content:space-between;
-}
+        /* Hero Section */
+        .hero {
+            height: 80vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(rgba(26, 26, 46, 0.8), rgba(26, 26, 46, 0.8)), 
+                        url('https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 0 20px;
+        }
 
-.done{ text-decoration:line-through; opacity:.6; }
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
 
-.star{ color:gold; }
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin-bottom: 2rem;
+        }
 
-.progress{
-  height:10px;
-  background:#ddd;
-  border-radius:10px;
-}
-.bar{
-  height:100%;
-  background:var(--main);
-  width:0%;
-}
-</style>
+        .btn {
+            background: var(--primary);
+            color: var(--dark);
+            padding: 12px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: 0.3s transform;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* Task Preview Section */
+        .app-demo {
+            padding: 50px 5%;
+            display: flex;
+            justify-content: center;
+        }
+
+        .task-card {
+            background: white;
+            width: 100%;
+            max-width: 500px;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .task-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .task-item input[type="checkbox"] {
+            margin-left: 15px;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 40px;
+            background: #eee;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2rem; }
+            nav { display: none; }
+        }
+    </style>
 </head>
-
 <body>
 
-<header>
-  <h2>🚀 برنامه‌چی</h2>
-  <button id="darkBtn">🌙</button>
-</header>
+    <header>
+        <a href="#" class="logo">برنامه چی</a>
+        <nav>
+            <a href="#features">ویژگی‌ها</a>
+            <a href="#demo">نسخه نمایشی</a>
+            <a href="#">ورود / ثبت‌نام</a>
+        </nav>
+    </header>
 
-<div class="container">
+    <section class="hero">
+        <h1>برنامه چی؟</h1>
+        <p>دیگه نپرس «برنامه‌ام چیه؟». با هوشمندترین سیستم مدیریت زمان، تمام کارهات رو طبق اولویت انجام بده.</p>
+        <a href="#demo" class="btn">همین الان شروع کن</a>
+    </section>
 
-<input id="title" placeholder="کار جدید...">
-<select id="category">
-  <option>درس</option>
-  <option>کار</option>
-  <option>شخصی</option>
-</select>
-<button id="addBtn">اضافه</button>
+    <section id="demo" class="app-demo">
+      <div class="task-card">
+            <h3 style="margin-bottom: 20px;">📌 کارهای امروز من</h3>
+            <div id="taskList">
+                <div class="task-item">
+                    <input type="checkbox" checked>
+                    <span>طراحی لوگوی جدید سایت</span>
+                </div>
+                <div class="task-item">
+                    <input type="checkbox">
+                    <span>برگزاری جلسه با تیم فنی</span>
+                </div>
+                <div class="task-item">
+                    <input type="checkbox">
+                    <span>تمرکز عمیق (پومودورو) - ۴۵ دقیقه</span>
+                </div>
+            </div>
+            <div style="margin-top: 20px; display: flex; gap: 10px;">
+                <input type="text" id="taskInput" placeholder="کار جدید..." style="flex:1; padding: 8px; border-radius: 5px; border: 1px solid #ddd;">
+                <button onclick="addTask()" class="btn" style="padding: 5px 15px;">افزودن</button>
+            </div>
+        </div>
+    </section>
 
-<div class="progress"><div class="bar" id="bar"></div></div>
+    <footer class="footer">
+        <p>© ۲۰۲۶ - تمامی حقوق برای پلتفرم «برنامه چی» محفوظ است.</p>
+    </footer>
 
-<ul id="list"></ul>
+    <script>
+        function addTask() {
+            const input = document.getElementById('taskInput');
+            const list = document.getElementById('taskList');
+            if (input.value === '') return;
 
-</div>
-
-<script>
-let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-
-const list = document.getElementById("list");
-const title = document.getElementById("title");
-const category = document.getElementById("category");
-const bar = document.getElementById("bar");
-
-document.getElementById("addBtn").onclick = add;
-document.getElementById("darkBtn").onclick = () => {
-  document.body.classList.toggle("dark");
-};
-
-function save(){
-  localStorage.setItem("tasks", JSON.stringify(tasks));
-}
-
-function add(){
-  if(!title.value) return;
-
-  tasks.push({
-    title:title.value,
-    cat:category.value,
-    done:false,
-    star:false
-  });
-
-  title.value="";
-  save();
-  render();
-}
-
-function render(){
-  list.innerHTML = "";
-
-  tasks.forEach((t,i)=>{
-    const li = document.createElement("li");
-    li.className = "task";
-
-    const text = document.createElement("span");
-    text.textContent = (t.star ? "⭐ " : "") + t.title + " (" + t.cat + ")";
-    if(t.done) text.classList.add("done");
-
-    const btns = document.createElement("div");
-
-    const doneBtn = document.createElement("button");
-    doneBtn.textContent = "✔";
-    doneBtn.onclick = ()=>{ tasks[i].done=!tasks[i].done; save(); render(); };
-
-    const editBtn = document.createElement("button");
-    editBtn.textContent = "✏️";
-    editBtn.onclick = ()=>{
-      let val = prompt("ویرایش:", t.title);
-      if(val){ tasks[i].title = val; save(); render(); }
-    };
-
-    const starBtn = document.createElement("button");
-    starBtn.textContent = "⭐";
-    starBtn.onclick = ()=>{ tasks[i].star=!tasks[i].star; save(); render(); };
-
-    const delBtn = document.createElement("button");
-    delBtn.textContent = "❌";
-    delBtn.onclick = ()=>{ tasks.splice(i,1); save(); render(); };
-
-    btns.append(doneBtn, editBtn, starBtn, delBtn);
-
-    li.append(text, btns);
-    list.append(li);
-  });
-
-  let doneCount = tasks.filter(t=>t.done).length;
-  let percent = tasks.length ? (doneCount / tasks.length) * 100 : 0;
-  bar.style.width = percent + "%";
-}
-
-render();
-</script>
-
+            const div = document.createElement('div');
+            div.className = 'task-item';
+            div.innerHTML = `
+                <input type="checkbox">
+                <span>${input.value}</span>
+            `;
+            list.appendChild(div);
+            input.value = '';
+        }
+    </script>
 </body>
 </html>
