@@ -2,217 +2,75 @@
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>برنامه چی | نسخه کامل</title>
+    <title>برنامه چی | نسخه نهایی</title>
     <style>
-        :root {
-            --bg: #0f172a;
-            --card: #1e293b;
-            --primary: #FFD700;
-            --text: #f8fafc;
-            --danger: #ff4757;
-            --success: #2ed573;
-        }
-
-        body {
-            background-color: var(--bg);
-            color: var(--text);
-            font-family: 'Tahoma', sans-serif;
-            display: flex;
-            justify-content: center;
-            padding: 40px 20px;
-            direction: rtl;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 500px;
-            background: var(--card);
-            padding: 25px;
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
-        }
-
-        h2 { text-align: center; color: var(--primary); margin-bottom: 25px; }
-
-        .input-box {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        input {
-            flex: 1;
-            padding: 12px;
-            border-radius: 10px;
-            border: 1px solid #334155;
-            background: #0f172a;
-            color: white;
-            outline: none;
-        }
-
-        .add-btn {
-            background: var(--primary);
-            border: none;
-            padding: 10px 20px;
-            border-radius: 10px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .todo-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: #334155;
-            padding: 12px;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            transition: 0.3s;
-        }
-
-        .todo-item.done {
-            opacity: 0.5;
-            background: #1e293b;
-        }
-
-        .todo-item.done span {
-            text-decoration: line-through;
-        }
-
-        .content {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-            flex: 1;
-        }
-
-        .del-btn {
-            background: var(--danger);
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 12px;
-        }
-
-        .filter-tabs {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .filter-btn {
-            background: none;
-            border: 1px solid #475569;
-            color: #94a3b8;
-            padding: 5px 12px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 13px;
-        }
-
-        .filter-btn.active {
-            background: var(--primary);
-            color: var(--bg);
-            border-color: var(--primary);
-        }
+        body { background: #121212; color: white; font-family: sans-serif; display: flex; justify-content: center; padding-top: 50px; direction: rtl; }
+        .container { width: 350px; background: #1e1e1e; padding: 20px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        h2 { text-align: center; color: #FFD700; }
+        .input-group { display: flex; gap: 5px; margin-bottom: 20px; }
+        input { flex: 1; padding: 10px; border-radius: 5px; border: 1px solid #333; background: #252525; color: white; }
+        button#addBtn { background: #FFD700; border: none; padding: 10px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .item { display: flex; justify-content: space-between; background: #2c2c2c; padding: 10px; border-radius: 8px; margin-bottom: 8px; align-items: center; }
+        .item.done span { text-decoration: line-through; color: #888; }
+        .del-btn { background: #ff4757; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; }
+        .text-part { cursor: pointer; flex: 1; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <h2>برنامه چی؟</h2>
-    
-    <div class="filter-tabs">
-        <button class="filter-btn active" data-filter="all">همه</button>
-        <button class="filter-btn" data-filter="active">در جریان</button>
-        <button class="filter-btn" data-filter="done">انجام شده</button>
+    <div class="input-group">
+        <input type="text" id="taskInput" placeholder="بنویس...">
+        <button id="addBtn">افزودن</button>
     </div>
-
-    <div class="input-box">
-        <input type="text" id="todoInput" placeholder="کار جدید رو بنویس...">
-        <button class="add-btn" id="addBtn">افزودن</button>
-    </div>
-
-    <div id="listContainer"></div>
+    <div id="list"></div>
 </div>
 
 <script>
-    const input = document.getElementById('todoInput');
+    const input = document.getElementById('taskInput');
     const addBtn = document.getElementById('addBtn');
-    const listContainer = document.getElementById('listContainer');
-    const filterBtns = document.querySelectorAll('.filter-btn');
+    const list = document.getElementById('list');
 
-    let tasks = JSON.parse(localStorage.getItem('my_tasks')) || [];
-    let currentFilter = 'all';
+    // لود کردن از حافظه
+    let tasks = JSON.parse(localStorage.getItem('tasks_v2')) || [];
 
-    // تابع اصلی رندر کردن لیست
     function render() {
-        listContainer.innerHTML = '';
-        
-        const filteredTasks = tasks.filter(t => {if (currentFilter === 'active') return !t.done;
-            if (currentFilter === 'done') return t.done;
-            return true;
-        });
-
-        filteredTasks.forEach((task, index) => {
-            const item = document.createElement('div');
-            item.className = todo-item ${task.done ? 'done' : ''};
-            item.innerHTML = `
-                <div class="content" onclick="toggleTask(${task.id})">
-                    <input type="checkbox" ${task.done ? 'checked' : ''}>
-                    <span>${task.text}</span>
+        list.innerHTML = tasks.map(t => `
+            <div class="item ${t.done ? 'done' : ''}" data-id="${t.id}">
+                <div class="text-part">
+                    <input type="checkbox" ${t.done ? 'checked' : ''}>
+                    <span>${t.text}</span>
                 </div>
-                <button class="del-btn" onclick="deleteTask(${task.id})">حذف</button>
-            `;
-            listContainer.appendChild(item);
-        });
-
-        localStorage.setItem('my_tasks', JSON.stringify(tasks));
+                <button class="del-btn">حذف</button>
+            </div>
+        `).join('');
+        localStorage.setItem('tasks_v2', JSON.stringify(tasks));
     }
 
-    // اضافه کردن کار جدید
-    function addTask() {
-        if (input.value.trim() === '') return;
-        tasks.push({
-            id: Date.now(),
-            text: input.value,
-            done: false
-        });
-        input.value = '';
+    // مدیریت کلیک‌ها روی کل لیست (روش ضد خطا)
+    list.addEventListener('click', (e) => {
+        const id = Number(e.target.closest('.item').dataset.id);
+        
+        if (e.target.classList.contains('del-btn')) {
+            tasks = tasks.filter(t => t.id !== id);
+        } else {
+            tasks = tasks.map(t => t.id === id ? {...t, done: !t.done} : t);
+        }
         render();
-    }
-
-    // تغییر وضعیت انجام شد/نشد
-    window.toggleTask = function(id) {
-        tasks = tasks.map(t => t.id === id ? {...t, done: !t.done} : t);
-        render();
-    };
-
-    // حذف کار
-    window.deleteTask = function(id) {
-        tasks = tasks.filter(t => t.id !== id);
-        render();
-    };
-
-    // ایونت لسنرها
-    addBtn.addEventListener('click', addTask);
-    input.addEventListener('keypress', (e) => { if(e.key === 'Enter') addTask(); });
-
-    filterBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            filterBtns.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            currentFilter = btn.getAttribute('data-filter');
-            render();
-        });
     });
 
-    // اجرای اولیه
+    // دکمه افزودن
+    addBtn.onclick = () => {
+        if (input.value.trim() === "") return;
+        tasks.push({ id: Date.now(), text: input.value, done: false });
+        input.value = "";
+        render();
+    };
+
+    // اینتر زدن
+    input.onkeypress = (e) => { if(e.key === 'Enter') addBtn.onclick(); };
+
     render();
 </script>
 
