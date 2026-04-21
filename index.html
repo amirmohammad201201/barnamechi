@@ -3,203 +3,285 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>برنامه چی | مدیریت هوشمند زمان</title>
+    <title>برنامه چی | دستیار هوشمند تو</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
-            --primary: #FFD700; /* زرد پرانرژی */
-            --dark: #1a1a2e;    /* سرمه‌ای تیره */
-            --light: #f4f4f9;
-            --accent: #ff6b6b;
+            --primary: #FFD700;
+            --primary-hover: #ffc400;
+            --dark: #0f172a;
+            --dark-light: #1e293b;
+            --text-light: #f8fafc;
+            --accent: #22c55e;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Tahoma', sans-serif;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
 
         body {
-            background-color: var(--light);
-            color: var(--dark);
-            line-height: 1.6;
+            background-color: var(--dark);
+            color: var(--text-light);
+            min-height: 100vh;
         }
 
-        /* Header */
-        header {
-            background: var(--dark);
+        /* Navbar */
+        nav {
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(10px);
             padding: 1rem 5%;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
             position: sticky;
-            top: 0;
-            z-index: 1000;
+            top: 0; z-index: 100;
         }
 
-        .logo {
-            color: var(--primary);
-            font-size: 1.8rem;
-            font-weight: bold;
-            text-decoration: none;
+        .logo { font-size: 1.5rem; font-weight: 800; color: var(--primary); text-decoration: none; }
+        
+        .stats-badge {
+            background: var(--dark-light);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            border: 1px solid var(--primary);
         }
 
-        nav a {
-            color: white;
-            text-decoration: none;
-            margin-right: 20px;
-            font-size: 0.9rem;
-            transition: 0.3s;
-        }
-
-        nav a:hover {
-            color: var(--primary);
-        }
-
-        /* Hero Section */
-        .hero {
-            height: 80vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            background: linear-gradient(rgba(26, 26, 46, 0.8), rgba(26, 26, 46, 0.8)), 
-                        url('https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?auto=format&fit=crop&w=1350&q=80');
-            background-size: cover;
-            background-position: center;
-            color: white;
+        /* Main Container */
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
             padding: 0 20px;
         }
 
-        .hero h1 {
-            font-size: 3rem;
-            margin-bottom: 1rem;
+        .header-box { text-align: center; margin-bottom: 40px; }
+        .header-box h1 { font-size: 2.5rem; margin-bottom: 10px; }
+        .header-box p { color: #94a3b8; }
+
+        /* Input Area */
+        .input-group {
+            display: flex;
+            gap: 10px;
+            background: var(--dark-light);
+            padding: 10px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
         }
 
-        .hero p {
-            font-size: 1.2rem;
-            max-width: 600px;
-            margin-bottom: 2rem;
+        input[type="text"] {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: white;
+            padding: 10px;
+            font-size: 1rem;
+            outline: none;
         }
 
-        .btn {
+        .add-btn {
             background: var(--primary);
             color: var(--dark);
-            padding: 12px 30px;
-            border-radius: 50px;
-            text-decoration: none;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 10px;
             font-weight: bold;
-            transition: 0.3s transform;
+            cursor: pointer;
+            transition: 0.3s;
         }
 
-        .btn:hover {
-            transform: scale(1.05);
-        }
+        .add-btn:hover { background: var(--primary-hover); transform: translateY(-2px); }
 
-        /* Task Preview Section */
-        .app-demo {
-            padding: 50px 5%;
+        /* Filters */
+        .filters {
             display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .filter-btn {
+            background: none;
+            border: 1px solid #334155;
+            color: #94a3b8;
+            padding: 5px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .filter-btn.active {
+            background: var(--primary);
+            color: var(--dark);
+            border-color: var(--primary);
+        }
+
+        /* Todo List */
+        .todo-list { display: flex; flex-direction: column; gap: 12px; }
+
+        .todo-item {
+            background: var(--dark-light);
+            padding: 15px 20px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: 0.3s;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } }
+
+        .todo-item.completed { opacity: 0.6; }
+        .todo-item.completed span { text-decoration: line-through; }
+
+        .todo-content { display: flex; align-items: center; gap: 15px; flex: 1; }
+        
+        .check-btn {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 2px solid var(--primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
             justify-content: center;
         }
 
-        .task-card {
-            background: white;
-            width: 100%;
-            max-width: 500px;
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
+        .completed .check-btn { background: var(--accent); border-color: var(--accent); }
 
-        .task-item {
-            display: flex;
-            align-items: center;
-            padding: 10px 0;
-            border-bottom: 1px solid #eee;
-        }
-
-        .task-item input[type="checkbox"] {
-            margin-left: 15px;
-            width: 20px;
-            height: 20px;
+        .delete-btn {
+            color: #ef4444;
+            background: none;
+            border: none;
             cursor: pointer;
+            font-size: 1.2rem;
+            opacity: 0.7;
         }
 
-        .footer {
-            text-align: center;
-            padding: 40px;
-            background: #eee;
-        }
+        .delete-btn:hover { opacity: 1; }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            .hero h1 { font-size: 2rem; }
-            nav { display: none; }
-        }
+        /* Footer Info */
+        .empty-state { text-align: center; margin-top: 50px; color: #64748b; }
     </style>
 </head>
 <body>
 
-    <header>
+    <nav>
         <a href="#" class="logo">برنامه چی</a>
-        <nav>
-            <a href="#features">ویژگی‌ها</a>
-            <a href="#demo">نسخه نمایشی</a>
-            <a href="#">ورود / ثبت‌نام</a>
-        </nav>
-    </header>
+        <div class="stats-badge" id="stats">امروز: ۰ تسک</div>
+    </nav>
 
-    <section class="hero">
-        <h1>برنامه چی؟</h1>
-        <p>دیگه نپرس «برنامه‌ام چیه؟». با هوشمندترین سیستم مدیریت زمان، تمام کارهات رو طبق اولویت انجام بده.</p>
-        <a href="#demo" class="btn">همین الان شروع کن</a>
-    </section>
-
-    <section id="demo" class="app-demo">
-    <div class="task-card">
-            <h3 style="margin-bottom: 20px;">📌 کارهای امروز من</h3>
-            <div id="taskList">
-                <div class="task-item">
-                    <input type="checkbox" checked>
-                    <span>طراحی لوگوی جدید سایت</span>
-                </div>
-                <div class="task-item">
-                    <input type="checkbox">
-                    <span>برگزاری جلسه با تیم فنی</span>
-                </div>
-                <div class="task-item">
-                    <input type="checkbox">
-                    <span>تمرکز عمیق (پومودورو) - ۴۵ دقیقه</span>
-                </div>
-            </div>
-            <div style="margin-top: 20px; display: flex; gap: 10px;">
-                <input type="text" id="taskInput" placeholder="کار جدید..." style="flex:1; padding: 8px; border-radius: 5px; border: 1px solid #ddd;">
-                <button onclick="addTask()" class="btn" style="padding: 5px 15px;">افزودن</button>
-            </div>
+    <div class="container">
+        <div class="header-box">
+            <h1>سلام! چه برنامه‌ای داری؟</h1>
+            <p>کارهات رو اینجا بنویس تا خیالت راحت بشه.</p>
         </div>
-    </section>
 
-    <footer class="footer">
-        <p>© ۲۰۲۶ - تمامی حقوق برای پلتفرم «برنامه چی» محفوظ است.</p>
-    </footer>
+        <div class="input-group">
+            <input type="text" id="todo-input" placeholder="مثلاً: ورزش صبحگاهی..." onkeypress="handleKeyPress(event)">
+            <button class="add-btn" onclick="addTodo()">افزودن</button>
+        </div>
+
+        <div class="filters">
+            <button class="filter-btn active" onclick="filterTodo('all', this)">همه</button>
+            <button class="filter-btn" onclick="filterTodo('active', this)">در جریان</button>
+            <button class="filter-btn" onclick="filterTodo('completed', this)">انجام شده</button>
+        </div>
+
+        <div id="todo-list" class="todo-list">
+            </div>
+
+        <div id="empty-msg" class="empty-state">
+            <i class="fas fa-clipboard-list fa-3x" style="margin-bottom: 15px;"></i>
+            <p>لیست خالیه، یک هدف برای امروزت بنویس!</p>
+        </div>
+    </div>
 
     <script>
-        function addTask() {
-            const input = document.getElementById('taskInput');
-            const list = document.getElementById('taskList');
-            if (input.value === '') return;
+        let todos = JSON.parse(localStorage.getItem('barnamechi_todos')) || [];
 
-            const div = document.createElement('div');
-            div.className = 'task-item';
-            div.innerHTML = `
-                <input type="checkbox">
-                <span>${input.value}</span>
-            `;
-            list.appendChild(div);
-            input.value = '';
+        function saveAndRender() {
+            localStorage.setItem('barnamechi_todos', JSON.stringify(todos));
+            renderTodos();
+            updateStats();
         }
+
+        function addTodo() {
+            const input = document.getElementById('todo-input');
+            if (input.value.trim() === "") return;
+
+            const newTodo = {
+                id: Date.now(),
+                text: input.value,
+                completed: false
+            };
+
+            todos.unshift(newTodo);
+            input.value = "";
+            saveAndRender();
+        }
+
+        function handleKeyPress(e) {
+            if (e.key === 'Enter') addTodo();
+        }
+
+        function toggleTodo(id) {
+            todos = todos.map(t => t.id === id ? {...t, completed: !t.completed} : t);
+            saveAndRender();
+        }
+
+        function deleteTodo(id) {
+            todos = todos.filter(t => t.id !== id);
+            saveAndRender();
+        }
+
+        function updateStats() {
+            const count = todos.filter(t => !t.completed).length;
+            document.getElementById('stats').innerText = امروز: ${count} تسک فعال;
+        }
+
+        function filterTodo(type, btn) {
+            // آپدیت استایل دکمه‌ها
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            renderTodos(type);
+        }
+
+        function renderTodos(filter = 'all') {
+            const listElement = document.getElementById('todo-list');
+            const emptyMsg = document.getElementById('empty-msg');
+            listElement.innerHTML = "";
+
+            let filtered = todos;
+            if (filter === 'active') filtered = todos.filter(t => !t.completed);
+            if (filter === 'completed') filtered = todos.filter(t => t.completed);
+
+            if (filtered.length === 0) {
+                emptyMsg.style.display = "block";
+            } else {
+                emptyMsg.style.display = "none";
+                filtered.forEach(todo => {
+                    const item = document.createElement('div');
+                    item.className = todo-item ${todo.completed ? 'completed' : ''};
+                    item.innerHTML = `
+                        <div class="todo-content" onclick="toggleTodo(${todo.id})">
+                            <div class="check-btn">
+                                ${todo.completed ? '<i class="fas fa-check" style="font-size: 12px; color: white;"></i>' : ''}
+                            </div>
+                            <span>${todo.text}</span>
+                        </div>
+                        <button class="delete-btn" onclick="deleteTodo(${todo.id})">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    `;
+                    listElement.appendChild(item);
+                });
+            }
+        }
+
+        // اجرای اولیه
+        saveAndRender();
     </script>
 </body>
-</html>    
+</html>
