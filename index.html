@@ -3,20 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>برنامه‌چی</title>
+<title>برنامه‌چی حرفه‌ای</title>
 
 <style>
 :root{
   --bg:#f5f7fb;
-  --card:#ffffff;
+  --card:#fff;
   --text:#222;
-  --primary:#4f46e5;
+  --main:#6366f1;
 }
 .dark{
   --bg:#0f172a;
   --card:#1e293b;
   --text:#e5e7eb;
-  --primary:#22c55e;
+  --main:#22c55e;
 }
 
 body{
@@ -24,61 +24,54 @@ body{
   font-family:sans-serif;
   background:var(--bg);
   color:var(--text);
-  transition:0.3s;
 }
 
 header{
   display:flex;
   justify-content:space-between;
-  padding:15px 20px;
+  padding:15px;
   background:var(--card);
-  box-shadow:0 2px 10px rgba(0,0,0,0.05);
 }
-
-h1{margin:0;font-size:22px;}
 
 button{
-  cursor:pointer;
   border:none;
-  padding:8px 12px;
+  padding:6px 10px;
   border-radius:8px;
-  background:var(--primary);
-  color:white;
+  background:var(--main);
+  color:#fff;
+  cursor:pointer;
 }
 
-.container{
-  max-width:500px;
-  margin:20px auto;
-}
+.container{max-width:600px;margin:20px auto;}
 
-.box input{
+input,select{
   padding:10px;
   margin:5px;
-  width:calc(100% - 22px);
+  width:100%;
 }
 
 .task{
   background:var(--card);
-  margin:10px 0;
   padding:10px;
+  margin:10px 0;
   border-radius:10px;
   display:flex;
   justify-content:space-between;
-  align-items:center;
-  animation:fade .3s ease;
 }
 
-.done{text-decoration:line-through;opacity:0.6;}
+.done{ text-decoration:line-through; opacity:.6; }
 
-@keyframes fade{
-  from{opacity:0;transform:translateY(10px);}
-  to{opacity:1;}
+.star{ color:gold; }
+
+.progress{
+  height:10px;
+  background:#ddd;
+  border-radius:10px;
 }
-
-.stats{
-  text-align:center;
-  margin-top:10px;
-  font-size:14px;
+.bar{
+  height:100%;
+  background:var(--main);
+  width:0%;
 }
 </style>
 </head>
@@ -86,108 +79,99 @@ button{
 <body>
 
 <header>
-  <h1>📅 برنامه‌چی</h1>
-  <button onclick="toggleDark()">🌙</button>
+  <h2>🚀 برنامه‌چی</h2>
+  <button id="darkBtn">🌙</button>
 </header>
 
 <div class="container">
 
-<div class="box">
-  <input id="taskInput" placeholder="کار جدید...">
-  <input type="date" id="taskDate">
-  <button onclick="addTask()">اضافه</button>
-</div>
+<input id="title" placeholder="کار جدید...">
+<select id="category">
+  <option>درس</option>
+  <option>کار</option>
+  <option>شخصی</option>
+</select>
+<button id="addBtn">اضافه</button>
 
-<input id="search" placeholder="🔍 جستجو..." oninput="render()">
-
-<div style="text-align:center;margin:10px;">
-  <button onclick="filter='all';render()">همه</button>
-  <button onclick="filter='active';render()">فعال</button>
-  <button onclick="filter='done';render()">انجام شده</button>
-</div>
+<div class="progress"><div class="bar" id="bar"></div></div>
 
 <ul id="list"></ul>
-
-<div class="stats" id="stats"></div>
 
 </div>
 
 <script>
 let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-let filter = "all";
+
+const list = document.getElementById("list");
+const title = document.getElementById("title");
+const category = document.getElementById("category");
+const bar = document.getElementById("bar");
+
+document.getElementById("addBtn").onclick = add;
+document.getElementById("darkBtn").onclick = () => {
+  document.body.classList.toggle("dark");
+};
 
 function save(){
-  localStorage.setItem("tasks",JSON.stringify(tasks));
+  localStorage.setItem("tasks", JSON.stringify(tasks));
 }
 
-function addTask(){
-  let title = taskInput.value.trim();
-  if(!title) return;
+function add(){
+  if(!title.value) return;
 
   tasks.push({
-    title,
-    date: taskDate.value,
-    completed:false
+    title:title.value,
+    cat:category.value,
+    done:false,
+    star:false
   });
 
-  taskInput.value="";
-  save();
-  render();
-}
-
-function deleteTask(i){
-  tasks.splice(i,1);
-  save();
-  render();
-}
-
-function toggleTask(i){
-  tasks[i].completed = !tasks[i].completed;
+  title.value="";
   save();
   render();
 }
 
 function render(){
-  let list = document.getElementById("list");
-  let search = document.getElementById("search").value.toLowerCase();
-  list.innerHTML="";
+  list.innerHTML = "";
 
-  let filtered = tasks.filter(t=>{
-    return t.title.toLowerCase().includes(search) &&
-    (filter==="all" ||
-     (filter==="active" && !t.completed) ||
-     (filter==="done" && t.completed));
-  });
+  tasks.forEach((t,i)=>{
+    const li = document.createElement("li");
+    li.className = "task";
 
-  filtered.forEach((t,i)=>{
-    let li = document.createElement("li");
-    li.className="task";
+    const text = document.createElement("span");
+    text.textContent = (t.star ? "⭐ " : "") + t.title + " (" + t.cat + ")";
+    if(t.done) text.classList.add("done");
 
-    let text = document.createElement("span");
-    text.textContent = t.title + " " + (t.date||"");
-    if(t.completed) text.classList.add("done");
+    const btns = document.createElement("div");
 
-    let btns = document.createElement("div");
+    const doneBtn = document.createElement("button");
+    doneBtn.textContent = "✔";
+    doneBtn.onclick = ()=>{ tasks[i].done=!tasks[i].done; save(); render(); };
 
-    let ok = document.createElement("button");
-    ok.textContent="✔";
-    ok.onclick=()=>toggleTask(i);
+    const editBtn = document.createElement("button");
+    editBtn.textContent = "✏️";
+    editBtn.onclick = ()=>{
+      let val = prompt("ویرایش:", t.title);
+      if(val){ tasks[i].title = val; save(); render(); }
+    };
 
-    let del = document.createElement("button");
-    del.textContent="❌";
-    del.onclick=()=>deleteTask(i);
+    const starBtn = document.createElement("button");
+    starBtn.textContent = "⭐";
+    starBtn.onclick = ()=>{ tasks[i].star=!tasks[i].star; save(); render(); };
 
-    btns.append(ok,del);
-    li.append(text,btns);
+    const delBtn = document.createElement("button");
+    delBtn.textContent = "❌";
+    delBtn.onclick = ()=>{ tasks.splice(i,1); save(); render(); };
+
+    btns.append(doneBtn, editBtn, starBtn, delBtn);
+
+    li.append(text, btns);
     list.append(li);
   });
 
-  let done = tasks.filter(t=>t.completed).length;
-  stats.textContent = انجام شده: ${done} / ${tasks.length};
-}
-
-function toggleDark(){
-  document.body.classList.toggle("dark");
+  let doneCount = tasks.filter(t=>t.done).length;
+  let percent = tasks.length ? (doneCount / tasks.length) * 100 : 0;
+  bar.style.width = percent + "%";
 }
 
 render();
