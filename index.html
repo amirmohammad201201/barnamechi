@@ -2,77 +2,221 @@
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>برنامه چی | نسخه نهایی</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>برنامه چی | Pro</title>
     <style>
-        body { background: #121212; color: white; font-family: sans-serif; display: flex; justify-content: center; padding-top: 50px; direction: rtl; }
-        .container { width: 350px; background: #1e1e1e; padding: 20px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        h2 { text-align: center; color: #FFD700; }
-        .input-group { display: flex; gap: 5px; margin-bottom: 20px; }
-        input { flex: 1; padding: 10px; border-radius: 5px; border: 1px solid #333; background: #252525; color: white; }
-        button#addBtn { background: #FFD700; border: none; padding: 10px; border-radius: 5px; cursor: pointer; font-weight: bold; }
-        .item { display: flex; justify-content: space-between; background: #2c2c2c; padding: 10px; border-radius: 8px; margin-bottom: 8px; align-items: center; }
-        .item.done span { text-decoration: line-through; color: #888; }
-        .del-btn { background: #ff4757; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; }
-        .text-part { cursor: pointer; flex: 1; }
+        :root {
+            --bg: #080a10;
+            --surface: #161b22;
+            --primary: #58a6ff; /* آبی درخشان */
+            --accent: #ffd700;  /* زرد برند */
+            --text: #c9d1d9;
+            --grad: linear-gradient(135deg, #58a6ff 0%, #bc8cf2 100%);
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            background-image: radial-gradient(circle at 50% 50%, #161b22 0%, #080a10 100%);
+        }
+
+        .app-card {
+            width: 100%;
+            max-width: 450px;
+            margin-top: 50px;
+            background: var(--surface);
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.05);
+            height: fit-content;
+        }
+
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { 
+            font-size: 2rem; 
+            background: var(--grad); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            background: #0d1117;
+            padding: 5px;
+            border-radius: 16px;
+            border: 1px solid #30363d;
+            transition: 0.3s;
+        }
+
+        .input-wrapper:focus-within { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(88,166,255,0.2); }
+
+        input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: white;
+            padding: 12px 15px;
+            outline: none;
+            font-size: 1rem;
+        }
+
+        .add-btn {
+            background: var(--grad);
+            border: none;
+            color: white;
+            padding: 0 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .add-btn:hover { transform: scale(1.05); filter: brightness(1.1); }
+
+        .list-container { margin-top: 25px; }
+
+        .todo-item {
+            background: #21262d;
+            margin-bottom: 12px;
+            padding: 15px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid transparent;
+            transition: 0.2s;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } }
+
+        .todo-item:hover { border-color: #30363d; background: #282e36; }
+
+        .todo-item.done { opacity: 0.4; }
+        .todo-item.done span { text-decoration: line-through; }
+
+        .content { display: flex; align-items: center; gap: 12px; cursor: pointer; flex: 1; }
+
+        .custom-check {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #30363d;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+        }
+
+        .done .custom-check { background: var(--primary); border-color: var(--primary); }
+
+        .del-btn {
+            background: rgba(248, 81, 73, 0.1);
+            color: #f85149;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: 0.2s;
+        }
+
+        .del-btn:hover { background: #f85149; color: white; }
+
+        .stats {
+            margin-top: 20px;
+            justify-content: space-between;
+            padding: 0 10px;
+        }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h2>برنامه چی؟</h2>
-    <div class="input-group">
-        <input type="text" id="taskInput" placeholder="بنویس...">
-        <button id="addBtn">افزودن</button>
+<div class="app-card">
+    <div class="header">
+        <h1>برنامه چی؟</h1>
+        <p style="color: #8b949e; font-size: 0.9rem;">امروز رو متفاوت بساز</p>
     </div>
-    <div id="list"></div>
+
+    <div class="input-wrapper">
+        <input type="text" id="taskInput" placeholder="کار بعدی چیه؟">
+        <button class="add-btn" id="addBtn">ثبت</button>
+    </div>
+
+    <div id="list" class="list-container"></div>
+
+    <div class="stats">
+        <span id="count">0 کار باقی مونده</span>
+        <span style="cursor:pointer; color: var(--primary);" onclick="clearDone()">پاکسازی انجام شده‌ها</span>
+    </div>
 </div>
 
 <script>
     const input = document.getElementById('taskInput');
     const addBtn = document.getElementById('addBtn');
     const list = document.getElementById('list');
+    const countText = document.getElementById('count');
 
-    // لود کردن از حافظه
-    let tasks = JSON.parse(localStorage.getItem('tasks_v2')) || [];
+    let tasks = JSON.parse(localStorage.getItem('barnamechi_pro')) || [];
 
     function render() {
         list.innerHTML = tasks.map(t => `
-            <div class="item ${t.done ? 'done' : ''}" data-id="${t.id}">
-                <div class="text-part">
-                    <input type="checkbox" ${t.done ? 'checked' : ''}>
+            <div class="todo-item ${t.done ? 'done' : ''}" data-id="${t.id}">
+                <div class="content">
+                    <div class="custom-check">${t.done ? '✓' : ''}</div>
                     <span>${t.text}</span>
                 </div>
                 <button class="del-btn">حذف</button>
             </div>
         `).join('');
-        localStorage.setItem('tasks_v2', JSON.stringify(tasks));
+        
+        const activeCount = tasks.filter(t => !t.done).length;
+        countText.innerText = ${activeCount} کار باقی مونده;
+        localStorage.setItem('barnamechi_pro', JSON.stringify(tasks));
     }
 
-    // مدیریت کلیک‌ها روی کل لیست (روش ضد خطا)
-    list.addEventListener('click', (e) => {
-        const id = Number(e.target.closest('.item').dataset.id);
-        
+    // ایونت کلیک هوشمند
+    list.onclick = (e) => {
+        const item = e.target.closest('.todo-item');
+        if (!item) return;
+        const id = Number(item.dataset.id);
+
         if (e.target.classList.contains('del-btn')) {
             tasks = tasks.filter(t => t.id !== id);
         } else {
             tasks = tasks.map(t => t.id === id ? {...t, done: !t.done} : t);
         }
         render();
-    });
+    };
 
-    // دکمه افزودن
     addBtn.onclick = () => {
-        if (input.value.trim() === "") return;
-        tasks.push({ id: Date.now(), text: input.value, done: false });
+        const val = input.value.trim();
+        if (!val) return;
+        tasks.unshift({ id: Date.now(), text: val, done: false });
         input.value = "";
         render();
     };
 
-    // اینتر زدن
     input.onkeypress = (e) => { if(e.key === 'Enter') addBtn.onclick(); };
+
+    window.clearDone = () => {
+        tasks = tasks.filter(t => !t.done);
+        render();
+    };
 
     render();
 </script>
 
 </body>
 </html>
+            font-size: 0.8rem;
+            color: #8b949e;
+            display: flex;
